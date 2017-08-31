@@ -109,6 +109,53 @@ classes. Currently all sinatra helpers are located in 'app/helpers/sinatra' and
 custom classes are just in 'app/helpers'. However, this folder structure doesn't
 need to be followed. Everything inside 'app/helpers' will be loaded into the app.
 
+### Included Sinatra Helpers
+
+This project includes two standard sinatra helpers, "get_objects" and "output".
+
+These two helpers will both work on their own however add the most functionality
+when used together.
+
+When they are used together they add three key bits of functionality to your
+endpoint without anything else being added by yourself, optional paging, sorting and filtering.
+
+#### Examples
+
+##### Paging
+
+```
+http://localhost:9292/items?page=1
+```
+
+##### Sorting:
+
+A sorting field and order must be specified.
+
+Order can either be ```ASC``` or ```DESC```
+
+```
+http://localhost:9292/items?sort=field:ASC
+```
+
+##### Filtering
+
+Filtering can either be done by specifying fields that match a specific term or
+do not.
+
+When specifying a field that should not match a specific term start its name with a ```!```
+
+```
+Matching a field:
+http://localhost:9292?field_name=term
+
+Not matching a field:
+http://localhost:9292?!field_name=term
+```
+
+You can specify as many matching and not matching fields as you like in one query.
+
+These can also be combined.
+
 #### Making helpers available elsewhere within your app
 
 Sinatra helpers will only be accessible from within other Sinatra helpers and controllers.
