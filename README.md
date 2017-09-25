@@ -113,11 +113,113 @@ need to be followed. Everything inside 'app/helpers' will be loaded into the app
 
 This project includes two standard sinatra helpers, "get_objects" and "output".
 
+#### Get Objects
+
+This helper is used to get ActiveRecord objects from the database.
+
+It requires a class and an optional options hash to be passed to it.
+
+##### Available Options
+
+* **select** - An array of symbols with the name of object attributes. These define which fields to select from the database.
+* **where** - A hash of hard coded database where parameters. These should be formatted with ```key``` as object attribute name as a symbol and ```value``` as the wanted matching value.
+* **sql** - An SQL string used with the ```WHERE``` section of the query. Primarily used for ```WHERE OR``` queries.
+
+##### Example
+
+In below example we are selecting all articles with the below options:
+
+```ruby
+options = {
+  select: [ :id, :title, :author ],
+  where: {
+    author: 1
+  },
+  sql: "id = 1 or title = 'My Article'"
+}
+
+get_objects(Article, options)
+```
+
+If no options hash is passed then it will, by default, select all fields and all objects of that class.
+
+This can also be used to select objects of another objects association.
+
+In the below example we are selecting all of an articles categories:
+
+```ruby
+article = Article.find(1)
+
+get_objects(article.categories)
+```
+
+#### Output
+
+This helper is used to write json outputs for you.
+
+##### Standard Use
+
+A standard use for this helper is to output a message and object data based
+around the request method.
+
+The below example would be the standard use case for returning a list of items:
+
+```ruby
+output("article", articles.as_json)
+```
+
+Example Response:
+
+```json
+{
+  "message": "Listing all articles",
+  "count": "10",
+  "tag": [
+    { "id": 1, "title": "Article 1", "author": 1 },
+    { "id": 2, "title": "Article 2", "author": 1 },
+    { "id": 3, "title": "Article 3", "author": 1 },
+    ...
+  ]
+}
+```
+
+The message is automatically changed depending on the amount of items in the
+response and the method of the request.
+
+If there response data is not an array then there will not be a count in the response.
+
+Finally if used alongside paging with the ```get_objects``` helper there will
+also be a page output.
+
+##### Error Output
+
+To output error messages you can simply prefix the first parameter with "error: "
+and then make the second parameter an array of error messages.
+
+Example:
+
+```ruby
+output("error: article", article.errors)
+```
+
+##### Custom (Only Message)
+
+This method is used when you only want to respond with a message.
+
+Example:
+
+```ruby
+output("custom: This is my message!")
+```
+
+---
+
 These two helpers will both work on their own however add the most functionality
 when used together.
 
-When they are used together they add three key bits of functionality to your
-endpoint without anything else being added by yourself, optional paging, sorting and filtering.
+When they are used together they add three key pieces of functionality to your
+endpoint without anything else being added by yourself, optional paging, sorting
+and filtering.
 
 #### Examples
 
@@ -171,10 +273,11 @@ Sinatra helper or a controller then you must use a custom class style helper.
 
 ### Starting the Server
 
-
 To start the server in development I would suggest using [Shotgun](https://github.com/rtomayko/shotgun).
 While it is quite a lot slower, in development it will save you time because it
 will auto load changes as you make them and create new files.
+
+**_Warning:_** When using Shotgun background processes do not always run.
 
 To start the server with this use: ```bundle exec shotgun --server=thin --port=9292 config.ru```
 

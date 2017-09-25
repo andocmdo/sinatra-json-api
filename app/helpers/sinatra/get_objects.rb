@@ -26,6 +26,12 @@ helpers do
       isParams.delete("page")
     end
 
+    # Select
+    selectArray = nil
+    if options.has_key?(:select)
+      selectArray = options[:select].reject{|x| !object.new.attributes.keys.member?(x.to_s) } if options[:select].is_a?(Array)
+    end
+
     # Sort
     if isParams.has_key?("sort")
       match = /([a-z_]+):(DESC|ASC)/.match(isParams["sort"])
@@ -51,6 +57,7 @@ helpers do
     objects = object.where.not(notParams).where(isParams)
     objects = object.where(options[:sql]) if options.has_key?(:sql)
     @ObjectCountForPaging = objects.count if page != nil
+    objects = object.select(selectArray) if selectArray != nil
     objects = objects.limit(@ItemsPerPage).offset(@ItemsPerPage * (page - 1)) if page != nil
     objects = objects.order("#{match[1]} #{match[2]}") if match != nil
 
