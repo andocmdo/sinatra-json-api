@@ -17,6 +17,3 @@ if ENV.has_key?("DATABASE_URL")
 else
   ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[@Env])
 end
-
-originalLogger = ActiveRecord::Base.logger
-ActiveRecord::Base.logger = nil

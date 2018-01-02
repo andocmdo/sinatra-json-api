@@ -4,6 +4,9 @@ before do
   # Set response type
   content_type :json
 
+  # CORS
+  response.headers["Access-Control-Allow-Origin"] = "*"
+
 end
 
 # Before POST and PUT requests
