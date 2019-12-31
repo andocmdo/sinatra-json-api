@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Ruby Version
-ruby '2.5.0'
+ruby '2.5.1'
 
 # All Environments
 gem 'sinatra', '1.4.8'
